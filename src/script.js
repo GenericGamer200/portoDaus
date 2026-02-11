@@ -72,7 +72,6 @@ window.addEventListener("load", () => {
   const loaderText = document.getElementById("loader-text");
   const progressFill = document.getElementById("progress-fill");
 
-  // tampilkan bracket kalo udah kepanggil aja
   if (bLeft && bRight) {
     bLeft.classList.remove("opacity-0");
     bRight.classList.remove("opacity-0");
@@ -82,45 +81,92 @@ window.addEventListener("load", () => {
 
   const interval = setInterval(() => {
     let remaining = 100 - progress;
-    // buat progress makin pelan pas mendekati 100%
     let jump = remaining * 0.12;
     if (jump < 0.2) jump = 0.2;
     progress += jump;
 
-    // biar ga pernah lebih dari 100%
     if (progress >= 100) {
       progress = 100;
       clearInterval(interval);
 
-      // teks dev muncul
       loaderText.style.opacity = "1";
 
-      // biar preloader fade out setelah loading selesai
       setTimeout(() => {
         preloader.style.opacity = "0";
-        preloader.style.transition = "opacity 0.8s ease";
+        preloader.style.transition = "opacity 0.8s ease-out";
+
         setTimeout(() => {
-          document.body.classList.remove("overflow-hidden"); // bisa scroll lagi
+          document.body.classList.remove("overflow-hidden");
           preloader.remove();
+
+          //animasi section muncul setelah preloader hilang
+          const revealElements = document.querySelectorAll(".will-reveal");
+
+          if (revealElements.length > 0) {
+            const observer = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((entry) => {
+                  if (entry.isIntersecting) {
+                    //identifikasi elemen yang keliatan
+                    let animation = "animate-fade-in-up";
+
+                    if (
+                      entry.target.classList.contains("-translate-x-[30px]")
+                    ) {
+                      animation = "animate-fade-in-left";
+                    } else if (
+                      entry.target.classList.contains("translate-x-[30px]")
+                    ) {
+                      animation = "animate-fade-in-right";
+                    }
+                    //ilangin kelas awal
+                    entry.target.classList.remove(
+                      "opacity-0",
+                      "-translate-x-[30px]",
+                      "translate-x-[30px]",
+                      "translate-y-[30px]",
+                    );
+
+                    //tambahin kelas animasi sesuai arah
+                    if (
+                      entry.target.classList.contains("-translate-x-[30px]")
+                    ) {
+                      animation = "animate-fade-in-left";
+                    } else if (
+                      entry.target.classList.contains("translate-x-[30px]")
+                    ) {
+                      animation = "animate-fade-in-right";
+                    }
+
+                    entry.target.classList.add(animation);
+                    observer.unobserve(entry.target);
+                  }
+                });
+              },
+              {
+                root: null, // viewport
+                rootMargin: "0px", // no margin
+                threshold: 0.15, //gerak kalo 15% elemen keliatan
+              },
+            );
+
+            revealElements.forEach((el) => observer.observe(el));
+          }
         }, 800);
       }, 1200);
     }
 
-    // animasi progress bar
+    // update UI berdasarkan progress
     progressFill.style.width = `${progress}%`;
 
-    // animasi bracket bergerak
-    // maksimal bracket bergerak 40px
-    //pake gpu transform biar lebih smooth
     const maxTravel = 40;
     const currentTravel = (progress * maxTravel) / 100;
 
     if (bLeft && bRight) {
-      // set posisi awal bracket
       bLeft.style.left = "50%";
       bRight.style.right = "50%";
       bLeft.style.transform = `translateX(calc(-50% - ${currentTravel}px))`;
       bRight.style.transform = `translateX(calc(50% + ${currentTravel}px))`;
     }
-  }, 30); // biar lebih smooth, bisa diatur dari 30 sampe 100ms makin kecil makin smooth
+  }, 30);
 });
