@@ -1,0 +1,11 @@
+{
+  "name": "porto",
+  "version": "1.0.0",
+  "description": "Simple HTML + Tailwind v4 project",
+  "main": "src/index.html",
+  "scripts": {
+    "dev": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch"
+  },
+  "author": "daus",
+  "license": "MIT"
+}

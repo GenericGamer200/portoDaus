@@ -1,0 +1,13 @@
+{
+  "tailwindCSS.experimental.configFile": "./src/input.css",
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+  "editor.inlineSuggest.enabled": true,
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "tailwindCSS.includeLanguages": {
+    "html": "html"
+  }
+}
