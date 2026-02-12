@@ -4,6 +4,9 @@ const techStack = [
   { name: "CSS3", icon: "css.svg" },
   { name: "Tailwind", icon: "tailwind.svg" },
   { name: "JavaScript", icon: "js.svg" },
+  { name: "Java", icon: "java.svg" },
+  { name: "mySQL", icon: "mysql.svg" },
+  { name: "MariaDB", icon: "mariadb.svg" },
   { name: "Git", icon: "git.svg", extraClass: "invert" },
   { name: "GitHub", icon: "github.svg", extraClass: "invert" },
 ];
@@ -16,7 +19,7 @@ techStack.forEach((tech) => {
     <div class="group p-8 border border-border rounded-2xl bg-bg/40 hover:border-accent transition-all duration-300 flex flex-col items-center justify-center gap-4">
       <img src="assets/${tech.icon}" 
            alt="${tech.name}" 
-           class="w-12 h-12 grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all ${tech.extraClass || ""}"> 
+           class="w-12 h-12 md:grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all ${tech.extraClass || ""}"> 
       <span class="text-xs font-bold text-text/40 group-hover:text-text tracking-widest uppercase">
         ${tech.name}
       </span>
