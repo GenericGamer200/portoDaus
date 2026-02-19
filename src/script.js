@@ -1,5 +1,6 @@
 //improt
 import { gsap } from "gsap";
+import paladinModel from "./assets/paladinWaving.glb?url";
 
 //cari logo di assets
 const techStack = [
@@ -18,9 +19,11 @@ const techGrid = document.getElementById("tech-grid");
 
 // looping buat naro logo di seksi tech stack, {tech.extraClass || ""} biar ga error kalo gaada extraClass
 techStack.forEach((tech) => {
+  const imgUrl = new URL(`./assets/${tech.icon}`, import.meta.url).href; // buat dapetin path gambar yang bener, karena nanti bakal di deploy di github pages jadi pathnya beda, pake URL constructor biar otomatis sesuaikan pathnya sesuai lokasi file js ini berada
+
   const card = `
     <div class="group p-8 border border-border rounded-2xl bg-bg/40 hover:border-accent transition-all duration-300 flex flex-col items-center justify-center gap-4">
-      <img src="src/assets/${tech.icon}" 
+      <img src="${imgUrl}" 
            alt="${tech.name}" 
            class="w-12 h-12 md:grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all ${tech.extraClass || ""}"> 
       <span class="text-xs font-bold text-text/40 group-hover:text-text tracking-widest uppercase">
@@ -29,6 +32,14 @@ techStack.forEach((tech) => {
     </div>
   `;
   techGrid.innerHTML += card;
+});
+
+//tunggu sampe DOM loaded baru set src model viewer, biar ga error karena model viewernya belum ada pas script ini jalan
+document.addEventListener("DOMContentLoaded", () => {
+  const mv = document.querySelector("model-viewer");
+  if (mv) {
+    mv.src = paladinModel;
+  }
 });
 
 //logika tahun dinamis di footer
