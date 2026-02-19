@@ -1,3 +1,6 @@
+//improt
+import { gsap } from "gsap";
+
 //cari logo di assets
 const techStack = [
   { name: "HTML5", icon: "html.svg" },
@@ -52,9 +55,6 @@ function toggleMenu() {
 
   line3.classList.toggle("-rotate-45");
   line3.classList.toggle("-translate-y-2");
-
-  // cegah scroll pas menu kebuka
-  // document.body.classList.toggle("overflow-hidden");
 }
 
 menuBtn.addEventListener("click", toggleMenu);
@@ -64,112 +64,81 @@ mobileLinks.forEach((link) => {
   link.addEventListener("click", toggleMenu);
 });
 
-//logika preload
-//kunci scroll pas preloader aktif
-document.body.classList.add("overflow-hidden");
+// logika preloader
 
-window.addEventListener("load", () => {
-  const preloader = document.getElementById("preloader");
-  const bLeft = document.getElementById("bracket-left");
-  const bRight = document.getElementById("bracket-right");
-  const loaderText = document.getElementById("loader-text");
-  const progressFill = document.getElementById("progress-fill");
+document.body.classList.add("overflow-hidden"); // biar ga bisa scroll pas preloader
 
-  if (bLeft && bRight) {
-    bLeft.classList.remove("opacity-0");
-    bRight.classList.remove("opacity-0");
-  }
+gsap.set(
+  ["#bracket-left", "#bracket-right", "#loader-text", "#progress-fill"],
+  { opacity: 0 },
+);
 
-  let progress = 0;
+gsap
+  .timeline({
+    onComplete: () =>
+      gsap.to("#preloader", {
+        opacity: 0,
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => {
+          document.body.classList.remove("overflow-hidden"); // biar bisa scroll lagi setelah preloader hilang
+          gsap.set("#preloader", { pointerEvents: "none" });
+          initScrollReveal();
+        },
+      }),
+  })
+  //logika animasi preloader
+  .to(
+    "#bracket-left",
+    { x: -50, opacity: 1, duration: 1.3, ease: "power2.inOut" },
+    0.4,
+  )
+  .to(
+    "#bracket-right",
+    { x: 50, opacity: 1, duration: 1.3, ease: "power2.inOut" },
+    "<",
+  )
+  .to(
+    "#progress-fill",
+    { width: "100%", opacity: 1, duration: 1.3, ease: "power2.inOut" },
+    "<",
+  )
+  .to("#loader-text", { opacity: 1, duration: 0.7, ease: "power3.out" }, 1.8)
+  .to(
+    "#loader-text",
+    { scale: 1, duration: 0.55, ease: "elastic.out(1.05,0.5)" },
+    "-=0.35",
+  )
+  .to({}, { duration: 0.3 });
 
-  const interval = setInterval(() => {
-    let remaining = 100 - progress;
-    let jump = remaining * 0.12;
-    if (jump < 0.2) jump = 0.2;
-    progress += jump;
+// logika scroll reveal, pake IntersectionObserver API buat deteksi elemen yang masuk viewport, terus kasih animasi fade in sesuai arah masuknya
 
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(interval);
+function initScrollReveal() {
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
 
-      loaderText.style.opacity = "1";
+        const el = entry.target;
+        let anim = "animate-fade-in-up"; // default animasi kalo masuk dari bawah
 
-      setTimeout(() => {
-        preloader.style.opacity = "0";
-        preloader.style.transition = "opacity 0.8s ease-out";
+        if (el.classList.contains("-translate-x-[30px]"))
+          anim = "animate-fade-in-left";
+        if (el.classList.contains("translate-x-[30px]"))
+          anim = "animate-fade-in-right";
 
-        setTimeout(() => {
-          document.body.classList.remove("overflow-hidden");
-          preloader.remove();
+        el.classList.remove(
+          "opacity-0",
+          "translate-y-[30px]",
+          "-translate-x-[30px]",
+          "translate-x-[30px]",
+        );
+        el.classList.add(anim);
+        obs.unobserve(el);
+      });
+    },
+    { threshold: 0.15 }, // trigger animasi saat 15% elemen terlihat di viewport
+  );
 
-          //animasi section muncul setelah preloader hilang
-          const revealElements = document.querySelectorAll(".will-reveal");
-
-          if (revealElements.length > 0) {
-            const observer = new IntersectionObserver(
-              (entries) => {
-                entries.forEach((entry) => {
-                  if (entry.isIntersecting) {
-                    //identifikasi elemen yang keliatan
-                    let animation = "animate-fade-in-up";
-
-                    if (
-                      entry.target.classList.contains("-translate-x-[30px]")
-                    ) {
-                      animation = "animate-fade-in-left";
-                    } else if (
-                      entry.target.classList.contains("translate-x-[30px]")
-                    ) {
-                      animation = "animate-fade-in-right";
-                    }
-                    //ilangin kelas awal
-                    entry.target.classList.remove(
-                      "opacity-0",
-                      "-translate-x-[30px]",
-                      "translate-x-[30px]",
-                      "translate-y-[30px]",
-                    );
-
-                    //tambahin kelas animasi sesuai arah
-                    if (
-                      entry.target.classList.contains("-translate-x-[30px]")
-                    ) {
-                      animation = "animate-fade-in-left";
-                    } else if (
-                      entry.target.classList.contains("translate-x-[30px]")
-                    ) {
-                      animation = "animate-fade-in-right";
-                    }
-
-                    entry.target.classList.add(animation);
-                    observer.unobserve(entry.target);
-                  }
-                });
-              },
-              {
-                root: null, // viewport
-                rootMargin: "0px", // no margin
-                threshold: 0.15, //gerak kalo 15% elemen keliatan
-              },
-            );
-
-            revealElements.forEach((el) => observer.observe(el));
-          }
-        }, 800);
-      }, 1200);
-    }
-
-    // update UI berdasarkan progress
-    progressFill.style.width = `${progress}%`;
-
-    const maxTravel = 40;
-    const currentTravel = (progress * maxTravel) / 100;
-
-    if (bLeft && bRight) {
-      bLeft.style.left = "50%";
-      bRight.style.right = "50%";
-      bLeft.style.transform = `translateX(calc(-50% - ${currentTravel}px))`;
-      bRight.style.transform = `translateX(calc(50% + ${currentTravel}px))`;
-    }
-  }, 30);
-});
+  document.querySelectorAll(".will-reveal").forEach((el) => obs.observe(el)); // observe semua elemen dengan class will-reveal
+}

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="./output.css" rel="stylesheet" />
+    <link href="/input.css" rel="stylesheet" />
     <title>portofolio</title>
   </head>
 
@@ -13,11 +13,11 @@
   <div class="relative w-64 flex flex-col items-center justify-center">
     <!-- buat braket -->
     <div class="relative flex items-center justify-center mb-4 h-8 w-full">
-  <span id="bracket-left" class="text-accent font-black text-2xl absolute opacity-0 transition-opacity duration-500">[</span>
+  <span id="bracket-left" class="text-accent font-black text-2xl absolute opacity-0">[</span>
   
-  <span id="loader-text" class="text-text opacity-0 transition-opacity duration-500 font-bold text-xs uppercase tracking-widest">DEV</span>
+  <span id="loader-text" class="text-text opacity-0 font-bold text-xs uppercase tracking-widest">DEV</span>
   
-  <span id="bracket-right" class="text-accent font-black text-2xl absolute opacity-0 transition-opacity duration-500">]</span>
+  <span id="bracket-right" class="text-accent font-black text-2xl absolute opacity-0">]</span>
 </div>
 <!-- buat bar -->
     <div class="w-full h-[1px] bg-border relative overflow-hidden">
@@ -58,7 +58,7 @@
     <a href="#about" class="mobile-link hover:text-accent py-4 w-full text-center">tentang saya</a>
     <a href="#3d"   class="mobile-link  hover:text-accent py-4 w-full text-center">zona 3d</a>
     <a href="#tech" class="mobile-link  hover:text-accent py-4 w-full text-center">tech stack</a>
-    <a href="#footer"class="mobile-link hover:text-accent py-4 w-full text-center">kontak</a>
+    <a href="#footer" class="mobile-link hover:text-accent py-4 w-full text-center">kontak</a>
   </div>
 </div>
   </nav>
@@ -164,7 +164,7 @@
 </footer>
         <!-- end footer -->
       <!-- skrip js -->
-       <script src="script.js"></script>
+       <script type="module" src="./script.js"></script>
        <!-- model viewer buat 3d -->
         <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
   </body>
